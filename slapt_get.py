@@ -58,17 +58,17 @@ module = AnsibleModule(
         ),
         add_gpg_keys = dict(
             type     = 'bool',
-            aliases  = ['add-gpg', 'add-keys'],
+            aliases  = ['add-gpg', 'add-keys', 'add_keys'],
             default  = False
         ),
-        update_cache = dict(
+        cache_update = dict(
             type     = 'bool',
-            aliases  = ['update-cache', 'update'],
+            aliases  = ['cache-update','update-cache', 'update_cache', 'update'],
             default  = False
         ),
-        clean_cache = dict(
+        cache_clean = dict(
             type     = 'str',
-            aliases  = ['clean-cache', 'clean'],
+            aliases  = ['cache-clean', 'clean-cache', 'clean_cache', 'clean'],
             choices  = ['all', 'yes', 'old', 'no'],
             default  = 'no'
         ),
@@ -94,7 +94,7 @@ module = AnsibleModule(
         ),
     ),
     mutually_exclusive = [['package', 'upgrade']],
-    required_one_of = [['package', 'upgrade', 'update_cache']],
+    required_one_of = [['package', 'upgrade', 'cache_update']],
     supports_check_mode = True
 )
 
@@ -165,7 +165,7 @@ def slapt_clean():
     slaptget_action = '--clean'
 
     # Remove only old/unreachable packages
-    if module.params['clean_cache'] == 'old':
+    if module.params['cache_clean'] == 'old':
         slaptget_action = '--autoclean'
 
     ret = slapt_exec(slaptget_action, False, '')
@@ -337,10 +337,10 @@ def main():
         slaptget_flags += ' --no-md5'
 
 
-    if module.params['update_cache']:
+    if module.params['cache_update']:
         slapt_update()
 
-    if module.params['clean_cache']:
+    if module.params['cache_clean']:
         slapt_clean()
 
     if module.params['add_gpg_keys']:
