@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# (c) 2017, Mykyta Solomko
+# (c) 2017-2021, Mykyta Solomko
 # Written by Mykyta Solomko <sev@nix.org.ua>
 #
 # This module is free software: you can redistribute it and/or modify
@@ -20,9 +20,119 @@
 
 DOCUMENTATION = '''
 ---
+module: slackpkg
+short_description: APT-like package manager for Slackware >= 10.0
+description:
+    - Manage binary packages for Slackware using 'slapt-get' which
+      is available in versions starting 10.0.
+version_added: "1.0"
+options:
+    name:
+        description:
+            - name of package to install/remove
+        required: false
+        type: 'list'
+        default: None
+
+    state:
+        description:
+            - state of the package, you can use "installed" as an alias for C(present) and removed as one for C(absent).
+        choices: ['absent', 'present', 'installed', 'removed', 'latest']
+        required: false
+        default: present
+
+    upgrade:
+        description:
+            - upgrade installed packages
+        choices: ['yes', 'no', 'dist']
+        required: false
+        type: 'str'
+        default: 'no'
+
+    install_set:
+        description:
+            - install Slackware's package sets, such as 'a', 'tex', 'kde', etc.
+        required: false
+        type: 'bool'
+        default: False
+
+    suggested:
+        description:
+            - install suggested packages
+        required: false
+        type: 'bool'
+        default: False
+
+    add_keys:
+        description:
+            - update/add GPG keys
+        required: false
+        type: 'bool'
+        default: False
+
+    update_cache:
+        description:
+            - update package cache from repos
+        required: false
+        type: 'bool'
+        default: False
+
+    clean_cache:
+        description:
+            - remove downloaded packages from cache
+        required: false
+        choices: ['all', 'yes', 'old', 'no']
+        type: 'str'
+        default: 'no'
+
+    gpg_check:
+        description:
+            - enable/disable GPG check
+        required: false
+        type: 'bool'
+        default: False
+
+    ignore_excludes:
+        description:
+            - ignore excluded packages
+        required: false
+        type: 'bool'
+        default: False
+
+    ignore_deps:
+        description:
+            - ignore dependencies for package(s)
+        required: false
+        type: 'bool'
+        default: False
+
+    ignore_checksum:
+        description:
+            - ignore checksum verification for package(s)
+        required: false
+        type: 'bool'
+        default: False
+
+author: Mykyta Solomko
+requirements: [ "Slackware >= 10.0" ]
 '''
 
 EXAMPLES = '''
+# Upgrade all installed packages
+- slapt_get:
+    upgrade: yes
+    update_cache: yes
+    clean_cache: yes
+
+# Install packages
+-  slapt_get:
+    name: [ iptables, ipset ]
+    clean: yes
+
+# Install set of packages
+- slapt_get:
+    install_set: kde
+    clean: yes
 '''
 
 import os
