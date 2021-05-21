@@ -1,0 +1,20 @@
+---
+clone:
+  git:
+    image: drone/git
+
+pipeline:
+  mirror-to-github:
+    image: appleboy/drone-git-push
+    remote: git@github.com:Sevlin/ansible-slapt_get.git
+    force: true
+    secrets:
+      - source: github
+        target: GIT_PUSH_SSH_KEY
+    when:
+      event:
+        - push
+      branch:
+        - master
+
+# vim:set syntax=yaml ts=2 sw=2 et:
